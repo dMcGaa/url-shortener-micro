@@ -7,7 +7,7 @@
     <!-- CSS -->
     <!-- load bootstrap and custom stylesheet -->
     <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/superhero/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="stylesheets/main.css">
+    <!--<link rel="stylesheet" href="stylesheets/main.css">-->
 
 </head>
 <body>
@@ -16,7 +16,7 @@
     <div class="jumbotron">
         <h1 style="font-size: 210%;">URL Shortener Microservice</h1>
         <p>Shorten URL passed in on address bar.</p>
-        <p style = "color:black; background-color:lightgray; border-radius:5px;">URL: <%=makeShortUrl%></p>
+        <p style = "color:black; background-color:lightgray; border-radius:5px;">URL: <%=JSON.stringify(makeShortUrl)%></p>
         <p><a href="https://github.com/dMcGaa/url-shortener-micro">GitHub</a></p>
         <p style="font-size: 80%;"><i>updated 2016-01-04</i></p>
     </div>
