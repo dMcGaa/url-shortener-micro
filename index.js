@@ -7,8 +7,14 @@ var makeShortUrl = {
 };
 
 var shortenedUrls = {}; //object to store shortened URL objects
-createDefaultLinks();
 var baseShortUrl = "https://glacial-headland-3584.herokuapp.com/";
+// createDefaultLinks();
+
+//create default links
+createNewLink("http://dmcgaa.com", "1");
+createNewLink("http://google.com", "4");
+createNewLink("http://freecodecamp.com/news", "YKQ");
+
 
 app.set('port', (process.env.PORT || 5000));
 
