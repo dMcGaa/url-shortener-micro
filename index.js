@@ -6,8 +6,9 @@ var makeShortUrl = {
   shortUrl: null
 };
 
-var shortenedUrls = {};  //object to store shortened URL objects
+var shortenedUrls = {}; //object to store shortened URL objects
 createDefaultLinks();
+var baseShortUrl = "https://glacial-headland-3584.herokuapp.com/";
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -34,20 +35,34 @@ app.get('/new/*', function(request, response) {
   console.log("new");
 
   var str = request.url;
-  str = str.slice(1+("new/").length);
+  str = str.slice(1 + ("new/").length);
   if ((str.match(/http:+/))) { //(http:\/\/)(.+)(\.+)/)
-    makeShortUrl.originalUrl = str;
-    console.log(makeShortUrl);
-    response.render('pages/shortener')
+    var link = checkForUniqueURL(str);
+    if (link !== null) {
+      console.log("URL previously shortened")
+      makeShortUrl.originalUrl = shortenedUrls[link].originalUrl;
+      makeShortUrl.shortUrl = shortenedUrls[link].shortUrl;
+      response.render('pages/shortener')
+    }
+    else {
+
+      var sUrl = createShortURL();
+      console.log("short: " + sUrl);
+      makeShortUrl.originalUrl = str;
+      makeShortUrl.shortUrl = baseShortUrl + sUrl;
+      shortenedUrls[sUrl] = makeShortUrl;
+      console.log(makeShortUrl);
+      response.render('pages/shortener')
+    }
   }
-  else{
+  else {
     response.render('pages/index')
   }
 });
 
-app.get('/*', function(request, response) {  //shortened link already made
+app.get('/*', function(request, response) { //shortened link already made
   console.log("--Refreshed--")
-  //console.log("not main");
+    //console.log("not main");
 
   var str = request.url;
   str = str.slice(1);
@@ -59,7 +74,7 @@ app.get('/*', function(request, response) {  //shortened link already made
     response.redirect(makeShortUrl.originalUrl);
     //response.render('pages/shortener');
   }
-  else{
+  else {
     response.render('pages/index')
   }
 });
@@ -69,10 +84,38 @@ app.listen(app.get('port'), function() {
 });
 
 
-function createDefaultLinks(){
+function createDefaultLinks() {
   var myObj = {
     originalUrl: "http://dmcgaa.com",
     shortUrl: "https://glacial-headland-3584.herokuapp.com/1"
   }
   shortenedUrls["1"] = myObj;
+}
+
+function checkForUniqueURL(urlToCheck) {
+  for (var link in shortenedUrls) {
+    //console.log(link);
+    console.log(shortenedUrls[link].originalUrl); //cannot do ".link.originalUrl" and cannot do "[link][originalUrl]"
+    if (shortenedUrls[link].originalUrl == urlToCheck) {
+      return link;
+    }
+  }
+  return null;
+}
+
+function createShortURL() {
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  var text = "";
+
+  for (var i = 0; i < 3; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  for (var link in shortenedUrls) {
+    if (text == link) {
+      text = createShortURL();
+    }
+  }
+  return text;
+
 }
