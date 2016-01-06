@@ -6,6 +6,10 @@ var makeShortUrl = {
   shortUrl: null
 };
 
+var errorURLInvalid = {
+  error: "URL invalid"
+}
+
 var shortenedUrls = {}; //object to store shortened URL objects
 var baseShortUrl = "https://glacial-headland-3584.herokuapp.com/";
 // createDefaultLinks();
@@ -43,7 +47,7 @@ app.get('/new/*', function(request, response) {
 
   var str = request.url;
   str = str.slice(1 + ("new/").length);
-  if ((str.match(/http:+/))) { //(http:\/\/)(.+)(\.+)/)
+  if ((str.match(/http:\/\/(\w+)\.(\w+)/))||(str.match(/https:\/\/(\w+)\.(\w+)/))) { //(/http:\/\//)
     var link = checkForUniqueURL(str);
     if (link !== null) {
       console.log("URL previously shortened")
@@ -65,7 +69,8 @@ app.get('/new/*', function(request, response) {
     }
   }
   else {
-    response.render('pages/index')
+    //response.render('pages/index')
+    response.send(JSON.stringify(errorURLInvalid));
   }
 });
 
