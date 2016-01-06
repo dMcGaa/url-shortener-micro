@@ -13,6 +13,7 @@ var baseShortUrl = "https://glacial-headland-3584.herokuapp.com/";
 //create default links
 createNewLink("http://dmcgaa.com", "1");
 createNewLink("http://google.com", "4");
+createNewLink("https://github.com/dMcGaa/url-shortener-micro", "2");
 createNewLink("http://freecodecamp.com/news", "YKQ");
 
 
@@ -79,8 +80,8 @@ app.get('/*', function(request, response) { //shortened link already made
   if (str in shortenedUrls) {
     makeShortUrl = shortenedUrls[str];
     console.log("Redirect " + JSON.stringify(makeShortUrl));
-    //response.redirect(makeShortUrl.originalUrl);
-    response.render('pages/shortener');
+    response.redirect(makeShortUrl.originalUrl);
+    // response.render('pages/shortener');
   }
   else {
     response.render('pages/index')
