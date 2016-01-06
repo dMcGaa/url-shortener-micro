@@ -45,12 +45,14 @@ app.get('/new/*', function(request, response) {
       response.render('pages/shortener')
     }
     else {
-
       var sUrl = createShortURL();
       console.log("short: " + sUrl);
       makeShortUrl.originalUrl = str;
       makeShortUrl.shortUrl = baseShortUrl + sUrl;
-      shortenedUrls[sUrl] = makeShortUrl;
+      //shortenedUrls[sUrl] = makeShortUrl; //will copy object by reference, meaning a new url will replace all other ones generated
+      createNewLink(str, sUrl);//send immutable string to create new object
+      // shortenedUrls[sUrl].originalUrl = str;
+      // shortenedUrls[sUrl].shortUrl = baseShortUrl + sUrl;
       console.log(makeShortUrl);
       response.render('pages/shortener')
     }
@@ -68,11 +70,11 @@ app.get('/*', function(request, response) { //shortened link already made
   str = str.slice(1);
   //console.log(str)
   //if shortened URL has been made, redirect
-  if (str in shortenedUrls) { //(http:\/\/)(.+)(\.+)/)
+  if (str in shortenedUrls) {
     makeShortUrl = shortenedUrls[str];
     console.log("Redirect " + JSON.stringify(makeShortUrl));
-    response.redirect(makeShortUrl.originalUrl);
-    //response.render('pages/shortener');
+    //response.redirect(makeShortUrl.originalUrl);
+    response.render('pages/shortener');
   }
   else {
     response.render('pages/index')
@@ -91,6 +93,15 @@ function createDefaultLinks() {
   }
   shortenedUrls["1"] = myObj;
 }
+
+function createNewLink(origUrl, sUrl) {
+  var myObj = {
+    originalUrl: origUrl,
+    shortUrl: baseShortUrl + sUrl
+  }
+  shortenedUrls[sUrl] = myObj;
+}
+
 
 function checkForUniqueURL(urlToCheck) {
   for (var link in shortenedUrls) {
