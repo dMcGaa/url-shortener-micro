@@ -6,6 +6,9 @@ var makeShortUrl = {
   shortUrl: null
 };
 
+var shortenedUrls = {};  //object to store shortened URL objects
+createDefaultLinks();
+
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
@@ -28,48 +31,48 @@ app.get('/', function(request, response) {
 
 app.get('/new/*', function(request, response) {
   console.log("--Refreshed--")
-  console.log("not main");
+  console.log("new");
 
   var str = request.url;
   str = str.slice(1+("new/").length);
-  if ((str.match(/http+/))) { //(http:\/\/)(.+)(\.+)/)
+  if ((str.match(/http:+/))) { //(http:\/\/)(.+)(\.+)/)
     makeShortUrl.originalUrl = str;
     console.log(makeShortUrl);
     response.render('pages/shortener')
+  }
+  else{
+    response.render('pages/index')
   }
 });
 
 app.get('/*', function(request, response) {  //shortened link already made
   console.log("--Refreshed--")
-  console.log("not main");
+  //console.log("not main");
 
   var str = request.url;
   str = str.slice(1);
-  if ((str.match(/http+/))) { //(http:\/\/)(.+)(\.+)/)
-    makeShortUrl.originalUrl = str;
-    console.log(makeShortUrl);
-    response.render('pages/shortener')
+  //console.log(str)
+  //if shortened URL has been made, redirect
+  if (str in shortenedUrls) { //(http:\/\/)(.+)(\.+)/)
+    makeShortUrl = shortenedUrls[str];
+    console.log("Redirect " + JSON.stringify(makeShortUrl));
+    response.redirect(makeShortUrl.originalUrl);
+    //response.render('pages/shortener');
+  }
+  else{
+    response.render('pages/index')
   }
 });
-
-// app.get('/*', function(request, response) {
-//   //console.log(request.baseUrl);
-//   //console.log(request.url);
-//   var str = request.url;
-//   str = str.slice(1);
-//   if((str.match(/http+/)) && (typeof(request.baseUrl) == "string")){  //(http:\/\/)(.+)(\.+)/)
-//     makeShortUrl = str;
-//     console.log("Type: " + typeof(request.baseUrl));
-//     //console.log(request);
-//     console.log("Express query: " + JSON.stringify(request.query));
-//     console.log(request.baseUrl + " " + request.url);
-//     console.log(makeShortUrl);
-//     console.log(request.params);
-//   }
-
-//   response.render('pages/index')
-// });
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
+
+
+function createDefaultLinks(){
+  var myObj = {
+    originalUrl: "http://dmcgaa.com",
+    shortUrl: "https://glacial-headland-3584.herokuapp.com/1"
+  }
+  shortenedUrls["1"] = myObj;
+}
